@@ -20,7 +20,7 @@ public class MyPanel extends JPanel implements MouseListener {
 
 	private JButton start = new JButton("Compute CH");
 	
-	private String[] algos = {"Slow Convex Hull", "Graham's Algorithm", "Quickhull", "Jarvis's March", "Incremental Construction", "Divide and Conquer", "Chan's Algorithm"};
+	private String[] algos = {"Slow Convex Hull", "Graham's Algorithm", "Quickhull", "Jarvis's March", "Incremental Construction", "Divide and Conquer"/*, "Chan's Algorithm"*/};
 	private JComboBox<String> algoList = new JComboBox<String>(algos);
 	
 	private JButton restart = new JButton("Start Over");
@@ -1255,9 +1255,7 @@ public class MyPanel extends JPanel implements MouseListener {
 		List<Integer> outR = new ArrayList<Integer>();
 
 		if (size > 3) {
-//			System.out.println("Split with " + size + " points.");
 			int leftSize = (int) Math.floor(size/2);
-//			System.out.println("Sizes " + leftSize + " " + (size-leftSize));
 			List<Point2D> setL = new ArrayList<Point2D>();
 			List<Point2D> setR = new ArrayList<Point2D>();
 			
@@ -1276,35 +1274,35 @@ public class MyPanel extends JPanel implements MouseListener {
 				g2d.setColor(Color.darkGray);
 				drawLine(g2d, toScale(new Line2D(new Point2D(xavg, -100), new Point2D(xavg, windowHeight + 100))));
 				runThread();
-				
-				
 			}
 			
 			outL = dncHulling(setL, inputReal, container);
 			outR = dncHulling(setR, inputReal, container);
 			output = dncMerge(outL, outR, inputReal, container);
-			
-			List<Point2D> outputR = new ArrayList<Point2D>();
-			
-			for (int i = 0; i < outL.size(); i++) {
-				outputR.add(pntarrScale.get(outL.get(i)));
-			}
-			for (int i = 0; i < outR.size(); i++) {
-				outputR.add(pntarrScale.get(outR.get(i)));
-			}
-			
-			List<Point2D> poly = new ArrayList<Point2D>();
-			
-			for (int i = 0; i < output.size(); i++) {
-				poly.add(pntarrScale.get(output.get(i)));
-			}
-	
-			for (int j = 0; j < linarr.size(); j++) {
+			if (container!= null) {
+				List<Point2D> outputR = new ArrayList<Point2D>();
 				
-				if ((indexOf(outputR, linarr.get(j).getStart()) >= 0 || indexOf(outputR, linarr.get(j).getEnd()) >= 0) && crosses(linarr.get(j), poly, NEITHER)) {
-					linarr.remove(j);
-					j--;
-				} 
+				for (int i = 0; i < outL.size(); i++) {
+					outputR.add(pntarrScale.get(outL.get(i)));
+				}
+				for (int i = 0; i < outR.size(); i++) {
+					outputR.add(pntarrScale.get(outR.get(i)));
+				}
+				
+				List<Point2D> poly = new ArrayList<Point2D>();
+				
+				for (int i = 0; i < output.size(); i++) {
+					poly.add(pntarrScale.get(output.get(i)));
+				}
+		
+				for (int j = 0; j < linarr.size(); j++) {
+					
+					if ((indexOf(outputR, linarr.get(j).getStart()) >= 0 || indexOf(outputR, linarr.get(j).getEnd()) >= 0) && crosses(linarr.get(j), poly, NEITHER)) {
+						linarr.remove(j);
+						j--;
+					} 
+					
+				}
 			}
 			
 		} else {
@@ -1599,7 +1597,7 @@ public class MyPanel extends JPanel implements MouseListener {
 		
 		// Collect points that have remained on the Convex Hull
 		List<Integer> output = new ArrayList<Integer>();
-		output = addInClockwiseOrder(left, right);
+		output = addInClockwiseOrder(left, right, inputReal);
 		
 		return output;
 	}
@@ -1674,11 +1672,10 @@ public class MyPanel extends JPanel implements MouseListener {
 	 * @param right List<Integer> Representing the indexes of some points.
 	 * @return List<Integer> that combines both inputs into one set all in clockwise order.
 	 */
-	private static List<Integer> addInClockwiseOrder(List<Integer> left, List<Integer> right) {
+	private static List<Integer> addInClockwiseOrder(List<Integer> left, List<Integer> right, List<Point2D> pntarrReal) {
 		double xS = 0;
 		double yS = 0;
 		List<Point2D> pntarr = new ArrayList<Point2D>();
-		
 		for (int i = 0; i < left.size(); i++) {
 			xS += pntarrReal.get(left.get(i)).getX();
 			yS += pntarrReal.get(left.get(i)).getY();
