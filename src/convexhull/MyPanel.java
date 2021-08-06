@@ -20,7 +20,7 @@ public class MyPanel extends JPanel implements MouseListener {
 
 	private JButton start = new JButton("Compute CH");
 	
-	private String[] algos = {"Slow Convex Hull", "Graham's Algorithm", "Quickhull", "Jarvis's March", "Incremental Construction", "Divide and Conquer", "Chan's Algorithm"};
+	private String[] algos = {"Slow Convex Hull", "Graham's Algorithm", "Quickhull", "Jarvis's March", "Incremental Construction", "Divide and Conquer"/*, "Chan's Algorithm"*/};
 	private JComboBox<String> algoList = new JComboBox<String>(algos);
 	
 	private JButton restart = new JButton("Start Over");
