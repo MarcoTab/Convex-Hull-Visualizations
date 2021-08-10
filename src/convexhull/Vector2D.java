@@ -178,11 +178,10 @@ public class Vector2D {
 		List<Point2D> posY = new ArrayList<Point2D>();	// These two lists are to separate the points into two sets of points
 		List<Point2D> negY = new ArrayList<Point2D>();	// based on their position with respect to the central point.
 		
-		int remove = pntarr.indexOf(c);
+		int remove = MyPanel.indexOf(pntarr, c);
 		boolean removed = remove >= 0;
 		if (removed) {
 			pntarr.remove(c);
-//			System.out.println(c); 
 		}
 		
 		int len = pntarr.size();
@@ -202,13 +201,13 @@ public class Vector2D {
 				}
 			}
 		}
+		
 		// ^^^^ Sorts the points as mentioned
 		
 		posY = radialMergeSort(c, posY, reverseColinear);
 		negY = radialMergeSort(c, negY, reverseColinear);
 		
 		negY.addAll(posY);
-//		posY.addAll(negY);
 		if (removed) {
 			pntarr.add(remove, c);
 		}
@@ -260,42 +259,43 @@ public class Vector2D {
 			Vector2D v = new Vector2D(right.get(0).getX() - c.getX(), right.get(0).getY() - c.getY());	// The starting points are the central point. This serves as a comparator later on.
 			
 			if (greater(cross(u, v), 0)) { // If the cross product of u with v is larger than 0, this means the end point of u is smaller than the end point of v.
-				result.add(left.get(0));	// Add the point to the return value
-				left.remove(0);	// Get rid of the point we just sorted
+				result.add(left.remove(0));	// Add the point to the return value
+				
 			} else if (equals(cross(u, v), 0)) { // If the cross product is 0, then this means that the points are co-linear, we must do some extra checking to make sure they are correctly sorted
 				if (greater(u.getMag(), v.getMag())) {
 					if (reverse) {
-						result.add(left.get(0));
-						left.remove(0);
+						result.add(left.remove(0));
+						
 					} else {
-						result.add(right.get(0));
-						right.remove(0);
+						result.add(right.remove(0));
+						
 					}
 				} else {
 					if (reverse) {
-						result.add(right.get(0));
-						right.remove(0);
+						result.add(right.remove(0));
+						
 					} else {
-						result.add(left.get(0));
-						left.remove(0);
+						result.add(left.remove(0));
+						
 					}
 				}
 			} else {
-				result.add(right.get(0));	// Add the point to the return value
-				right.remove(0);	// Get rid of the point we just sorted
+				result.add(right.remove(0));	// Add the point to the return value
+
 			}
 		}
-		//Once at least one of the arays is empty, only ONE of these loops executes, and all the points are put into the return value.
+		//Once at least one of the arrays is empty, only ONE of these loops executes, and all the points are put into the return value.
 		while (left.size() > 0) {
-			result.add(left.get(0));
-			left.remove(0);
+			result.add(left.remove(0));
+			
 		}
 		while (right.size() > 0) {
-			result.add(right.get(0));
-			right.remove(0);
+			result.add(right.remove(0));
+			
 		}
 		return result;
 	}
+	
 	
 	private static final double THRESHOLD = 0.0001; 
 	
