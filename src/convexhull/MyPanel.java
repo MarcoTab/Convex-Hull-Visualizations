@@ -1400,7 +1400,7 @@ public class MyPanel extends JPanel implements MouseListener {
 		List<Integer> right = new ArrayList<Integer>(iright);
 		
 		int lsize = left.size();
-		int rsize = right.size();
+		// int rsize = right.size();
 		
 		Graphics2D g2d;
 		try {g2d = (Graphics2D) container.getGraphics();} catch(NullPointerException ex) {g2d = null;}
