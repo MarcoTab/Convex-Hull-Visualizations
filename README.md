@@ -10,4 +10,4 @@ Run from the command line: simply navigate to where chtest.jar is located and ty
 
 ```Tester.java``` contains a simple program to test runtimes of the different algorithms without having to use the UI.
 
-[Video Presentation][https://youtu.be/BCmF2SIZ06M]
+[Video Presentation](https://youtu.be/BCmF2SIZ06M)
