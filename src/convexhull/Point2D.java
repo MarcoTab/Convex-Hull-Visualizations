@@ -93,11 +93,25 @@ public class Point2D {
 	public boolean xLessThan(Point2D p) {
 		return (Vector2D.less(this.getX(), p.getX()));
 	}
-	
+
+
 	public boolean xGreaterThan(Point2D p) {
 		return (Vector2D.greater(this.getX(), p.getX()));
 	}
 
+
+	public int compare(Point2D b) {
+		if (Vector2D.less(this.getX(), b.getX())) return -1;
+
+		else if (Vector2D.equals(this.getX(), b.getX())) {
+			if (Vector2D.greater(this.getY(), b.getY())) return -1;
+			else if (Vector2D.less(this.getY(), b.getY())) return 1;
+			return 0;
+		}
+
+		// If a is greater than b.
+		return 1;
+	}
 	
 	/**
 	 * A string representation of a Point2D

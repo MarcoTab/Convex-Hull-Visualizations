@@ -306,7 +306,7 @@ public class MyPanel extends JPanel implements MouseListener {
 		}
 		
 		else if (e.getSource() == start) {
-			speed = (Integer) speedSlider.getValue();
+			speed = speedSlider.getValue();
 			
 			if (linarr.size() != 0) {
 				linarr = new ArrayList<Line2D>();
@@ -316,7 +316,7 @@ public class MyPanel extends JPanel implements MouseListener {
 			
 			String alg = (String) algoList.getSelectedItem();
 			
-			if (alg == "Slow Convex Hull") {
+			if (alg.equals("Slow Convex Hull")) {
 				try {
 					if (speed == 0) time = System.currentTimeMillis();
 					outarr = slowHull(pntarrReal, this);
@@ -327,7 +327,7 @@ public class MyPanel extends JPanel implements MouseListener {
 				}
 				repaint();
 				
-			} else if (alg == "Graham's Algorithm") {
+			} else if (alg.equals("Graham's Algorithm")) {
 				
 				try {
 					if (speed == 0) time = System.currentTimeMillis();
@@ -339,7 +339,7 @@ public class MyPanel extends JPanel implements MouseListener {
 				}
 				repaint();
 				
-			} else if (alg == "Quickhull") {
+			} else if (alg.equals("Quickhull")) {
 				try {
 					if (speed == 0) time = System.currentTimeMillis();
 					outarr = quickHull(pntarrReal, this);
@@ -351,7 +351,7 @@ public class MyPanel extends JPanel implements MouseListener {
 				
 				repaint();
 				
-			} else if (alg == "Jarvis's March") {
+			} else if (alg.equals("Jarvis's March")) {
 				try {
 					if (speed == 0) time = System.currentTimeMillis();
 					outarr = jarvisHull(pntarrReal, this);
@@ -362,7 +362,7 @@ public class MyPanel extends JPanel implements MouseListener {
 				}
 				
 				repaint();
-			} else if (alg == "Incremental Construction") {
+			} else if (alg.equals("Incremental Construction")) {
 				try {
 					if (speed == 0) time = System.currentTimeMillis();
 					outarr = incrementalHull(pntarrReal, this);
@@ -373,7 +373,7 @@ public class MyPanel extends JPanel implements MouseListener {
 				}
 				
 				repaint();
-			} else if (alg == "Divide and Conquer") {
+			} else if (alg.equals("Divide and Conquer")) {
 				try {
 					if (speed == 0) time = System.currentTimeMillis();
 					outarr = dncHull(pntarrReal, this);
@@ -428,7 +428,7 @@ public class MyPanel extends JPanel implements MouseListener {
 	
 	/**
 	 * Implements the naive, or initial, algorithm for computing a convex hull
-	 * @param input Point2D List (List<Point2D>) representing the points in the set
+	 * @param inputReal Point2D List (List<Point2D>) representing the points in the set
 	 * @param container MyPanel representing a container. If null, no animation will be drawn.
 	 * @return List<Integer> representing the indices of the points on the convex hull.
 	 * @throws Exception 
@@ -582,7 +582,7 @@ public class MyPanel extends JPanel implements MouseListener {
 	
 	/**
 	 * Implements Graham's algorithm for computing a convex hull
-	 * @param input Point2D List (List<Point2D>) representing the points in the set
+	 * @param inputReal Point2D List (List<Point2D>) representing the points in the set
 	 * @param container MyPanel representing a container. If null, no animation will be drawn.
 	 * @return List<Integer> representing the indices of the points on the convex hull.
 	 * @throws Exception 
@@ -764,7 +764,7 @@ public class MyPanel extends JPanel implements MouseListener {
 	
 	/**
 	 * Implements the QuickHull algorithm for computing a convex hull
-	 * @param input Point2D List representing the set of points
+	 * @param inputReal Point2D List representing the set of points
 	 * @param container MyPanel representing a container. If null, no animation will be drawn.
 	 * @return List<Integer> representing the indices of the points on the convex hull.
 	 * @throws Exception 
@@ -818,8 +818,8 @@ public class MyPanel extends JPanel implements MouseListener {
 			}
 			
 		}
-		output.add(inputReal.indexOf(min));
-		output.add(inputReal.indexOf(max));
+		output.add(indexOf(inputReal, min, true));
+		output.add(indexOf(inputReal, max, true));
 		
 		findHull(s1, min, max, output, container);
 		findHull(s2, max, min, output, container);
@@ -941,7 +941,7 @@ public class MyPanel extends JPanel implements MouseListener {
 			}
 			
 			findHull(l2, c, q, output, container);
-			return;
+
 		}
 	}
 	
@@ -1207,7 +1207,10 @@ public class MyPanel extends JPanel implements MouseListener {
 		
 		List<Integer> output = new ArrayList<Integer>();
 		Collections.sort(inputReal, inputReal.get(0).new SortByX());
-		pntarrScale = toScale(inputReal);
+		if (container != null) {
+			pntarrScale = toScale(inputReal);
+		}
+
 		output = dncHulling(inputReal, inputReal, container);
 		
 		if (container != null) {
@@ -1281,73 +1284,94 @@ public class MyPanel extends JPanel implements MouseListener {
 			outL = dncHulling(setL, inputReal, container);
 			outR = dncHulling(setR, inputReal, container);
 			output = dncMerge(outL, outR, inputReal, container);
-			
-			List<Point2D> outputR = new ArrayList<Point2D>();
-			
-			for (int i = 0; i < outL.size(); i++) {
-				outputR.add(pntarrScale.get(outL.get(i)));
-			}
-			for (int i = 0; i < outR.size(); i++) {
-				outputR.add(pntarrScale.get(outR.get(i)));
-			}
-			
-			List<Point2D> poly = new ArrayList<Point2D>();
-			
-			for (int i = 0; i < output.size(); i++) {
-				poly.add(pntarrScale.get(output.get(i)));
-			}
-	
-			for (int j = 0; j < linarr.size(); j++) {
+
+			if (container != null) {
+
+				List<Point2D> outputR = new ArrayList<Point2D>();
+
+				for (Integer item : outL) {
+					outputR.add(pntarrScale.get(item));
+				}
+				for (Integer value : outR) {
+					outputR.add(pntarrScale.get(value));
+				}
 				
-				if ((indexOf(outputR, linarr.get(j).getStart()) >= 0 || indexOf(outputR, linarr.get(j).getEnd()) >= 0) && crosses(linarr.get(j), poly, NEITHER)) {
-					linarr.remove(j);
-					j--;
-				} 
+				List<Point2D> poly = new ArrayList<Point2D>();
+
+				for (Integer integer : output) {
+					poly.add(pntarrScale.get(integer));
+				}
+		
+				for (int j = 0; j < linarr.size(); j++) {
+					
+					if ((indexOf(outputR, linarr.get(j).getStart()) >= 0 || indexOf(outputR, linarr.get(j).getEnd()) >= 0) && crosses(linarr.get(j), poly, NEITHER)) {
+						linarr.remove(j);
+						j--;
+					} 
+
+				}
+				
 			}
+			
+			
 			
 		} else {
-			
+			Integer zero = indexOf(inputReal, set.get(0), true);
+			Integer one = indexOf(inputReal, set.get(1), true);
 			if (size > 2) {
-				
+				Integer two = indexOf(inputReal, set.get(2), true);
 				// Add first three points in clockwise order
-				output.add(inputReal.indexOf(set.get(0)));
+				output.add(zero);
 				if (Vector2D.equals(Vector2D.above(new Line2D(set.get(0), set.get(1)), set.get(2)), 0)) {
-					output.add(inputReal.indexOf(set.get(2)));
-					linarr.add(new Line2D(pntarrScale.get(inputReal.indexOf(set.get(0))), pntarrScale.get(inputReal.indexOf(set.get(2)))));
-					linarr.add(new Line2D(pntarrScale.get(inputReal.indexOf(set.get(2))), pntarrScale.get(inputReal.indexOf(set.get(0)))));
+					output.add(two);
+					if (draw) {
+						linarr.add(new Line2D(pntarrScale.get(zero), pntarrScale.get(two)));
+						linarr.add(new Line2D(pntarrScale.get(two), pntarrScale.get(zero)));
+					}
+
 				} else if (Vector2D.greater(Vector2D.above(new Line2D(set.get(0), set.get(1)), set.get(2)), 0)) { 
-					output.add(inputReal.indexOf(set.get(1)));
-					output.add(inputReal.indexOf(set.get(2)));
-					linarr.add(new Line2D(pntarrScale.get(inputReal.indexOf(set.get(0))), pntarrScale.get(inputReal.indexOf(set.get(1)))));
-					linarr.add(new Line2D(pntarrScale.get(inputReal.indexOf(set.get(1))), pntarrScale.get(inputReal.indexOf(set.get(2)))));	
-					linarr.add(new Line2D(pntarrScale.get(inputReal.indexOf(set.get(2))), pntarrScale.get(inputReal.indexOf(set.get(0)))));
+					output.add(one);
+					output.add(two);
+					if (draw) {
+						linarr.add(new Line2D(pntarrScale.get(zero), pntarrScale.get(one)));
+						linarr.add(new Line2D(pntarrScale.get(one), pntarrScale.get(two)));
+						linarr.add(new Line2D(pntarrScale.get(two), pntarrScale.get(zero)));
+					}
+
 				} else {
-					output.add(inputReal.indexOf(set.get(2)));
-					output.add(inputReal.indexOf(set.get(1)));
-					linarr.add(new Line2D(pntarrScale.get(inputReal.indexOf(set.get(0))), pntarrScale.get(inputReal.indexOf(set.get(2)))));
-					linarr.add(new Line2D(pntarrScale.get(inputReal.indexOf(set.get(2))), pntarrScale.get(inputReal.indexOf(set.get(1)))));	
-					linarr.add(new Line2D(pntarrScale.get(inputReal.indexOf(set.get(1))), pntarrScale.get(inputReal.indexOf(set.get(0)))));
+					output.add(two);
+					output.add(one);
+					if (draw) {
+						linarr.add(new Line2D(pntarrScale.get(zero), pntarrScale.get(two)));
+						linarr.add(new Line2D(pntarrScale.get(two), pntarrScale.get(one)));
+						linarr.add(new Line2D(pntarrScale.get(one), pntarrScale.get(zero)));
+					}
+
 				}
 				if (draw && speed != 0) {
 					
 					container.paintComponent(g2d);
 					g2d.setColor(GREEN);
-					for (int i = 0; i < output.size(); i++) {
-						drawPoint(g2d, pntarrScale.get(output.get(i)));
+					for (Integer integer : output) {
+						drawPoint(g2d, pntarrScale.get(integer));
 					}
 					runThread();
 				}
 			} else {
-				output.add(inputReal.indexOf(set.get(0)));
-				output.add(inputReal.indexOf(set.get(1)));
-				linarr.add(new Line2D(pntarrScale.get(inputReal.indexOf(set.get(0))), pntarrScale.get(inputReal.indexOf(set.get(1)))));
-				linarr.add(new Line2D(pntarrScale.get(inputReal.indexOf(set.get(1))), pntarrScale.get(inputReal.indexOf(set.get(0)))));
+				output.add(zero);
+				output.add(one);
+
+				if (draw) {
+					linarr.add(new Line2D(pntarrScale.get(zero), pntarrScale.get(one)));
+					linarr.add(new Line2D(pntarrScale.get(one), pntarrScale.get(zero)));
+				}
+
 				if (draw && speed != 0) {
 					
 					container.paintComponent(g2d);
 					g2d.setColor(GREEN);
-					for (int i = 0; i < output.size(); i++) {
-						drawPoint(g2d, pntarrScale.get(output.get(i)));
+					for (Integer integer : output) {
+						drawPoint(g2d, pntarrScale.get(integer));
 					}
 					runThread();
 				}
@@ -1365,17 +1389,15 @@ public class MyPanel extends JPanel implements MouseListener {
 	
 	/**
 	 * Merges two convex hulls by finding upper and lower tangents and eliminating any extra points on the hull.
-	 * @param left List<Integer> representing the left CH
-	 * @param right List<Integer> representing the right CH
+	 * @param ileft List<Integer> representing the left CH
+	 * @param iright List<Integer> representing the right CH
 	 * @param inputReal List<Point2D> representing the entire set of points
 	 * @return List<Integer> representing the new merged CH
 	 */
 	private static List<Integer> dncMerge(List<Integer> ileft, List<Integer> iright, List<Point2D> inputReal, MyPanel container) {
-		List<Integer> left = new ArrayList<Integer>();
-		List<Integer> right = new ArrayList<Integer>();
-		
-		left.addAll(ileft);
-		right.addAll(iright);
+
+		List<Integer> left = new ArrayList<Integer>(ileft);
+		List<Integer> right = new ArrayList<Integer>(iright);
 		
 		int lsize = left.size();
 		int rsize = right.size();
@@ -1390,12 +1412,12 @@ public class MyPanel extends JPanel implements MouseListener {
 		
 		List<Point2D> curSetR = new ArrayList<Point2D>();
 		List<Point2D> curSetL = new ArrayList<Point2D>();
-		
-		for (int i = 0; i < lsize; i++) {
-			curSetL.add(inputReal.get(left.get(i)));
+
+		for (Integer integer : left) {
+			curSetL.add(inputReal.get(integer));
 		}
-		for (int i = 0; i < rsize; i++) {
-			curSetR.add(inputReal.get(right.get(i)));
+		for (Integer integer : right) {
+			curSetR.add(inputReal.get(integer));
 		}
 		
 		
@@ -1474,6 +1496,7 @@ public class MyPanel extends JPanel implements MouseListener {
 			drawLine(g2d, toScale(topLine));
 			runThread();
 		}
+
 		while (crosses(botLine, curSetR, START) || crosses(botLine, curSetL, END)) {
 			
 			while (crosses(botLine, curSetL, END)) {
@@ -1556,7 +1579,7 @@ public class MyPanel extends JPanel implements MouseListener {
 				i = 0;
 			}
 			
-			left.remove((Integer) inputReal.indexOf(curSetL.remove(i)));
+			left.remove((Integer) indexOf(inputReal, curSetL.remove(i), true));
 			
 			if (i >= curSetL.size()) {
 				i = 0;
@@ -1575,7 +1598,7 @@ public class MyPanel extends JPanel implements MouseListener {
 				i = 0;
 			}
 			
-			right.remove((Integer) inputReal.indexOf(curSetR.remove(i)));
+			right.remove((Integer) indexOf(inputReal, curSetR.remove(i), true));
 			
 			if (i >= curSetR.size()) {
 				i = 0;
@@ -1583,8 +1606,8 @@ public class MyPanel extends JPanel implements MouseListener {
 		}
 		
 		if (draw) {
-			linarr.add(new Line2D(pntarrScale.get(inputReal.indexOf(topLine.getStart())), pntarrScale.get(inputReal.indexOf(topLine.getEnd()))));
-			linarr.add(new Line2D(pntarrScale.get(inputReal.indexOf(botLine.getStart())), pntarrScale.get(inputReal.indexOf(botLine.getEnd()))));
+			linarr.add(new Line2D(pntarrScale.get(indexOf(inputReal, topLine.getStart(), true)), pntarrScale.get(indexOf(inputReal, topLine.getEnd(), true))));
+			linarr.add(new Line2D(pntarrScale.get(indexOf(inputReal, botLine.getStart(), true)), pntarrScale.get(indexOf(inputReal, botLine.getEnd(), true))));
 		}
 		
 		
@@ -1604,8 +1627,12 @@ public class MyPanel extends JPanel implements MouseListener {
 	 */
 	private static boolean crosses(Line2D crosser, List<Point2D> polygon, int end) {
 		int asserter[] = new int[polygon.size()];
-		
+//		System.out.println(".");
+//		System.out.println(asserter.length);
+//		System.out.println(crosser);
+//		System.out.println(end);
 		for (int i = 0; i < asserter.length; i++) {
+
 			if (Vector2D.greater(Vector2D.above(crosser, polygon.get(i)), 0)) {
 				asserter[i] = 1;
 			} else if (Vector2D.equals(Vector2D.above(crosser, polygon.get(i)), 0)) { // If collinear
@@ -1647,8 +1674,10 @@ public class MyPanel extends JPanel implements MouseListener {
 		return true;
 	}
 	
-	/**
-	 * Helper function that finds an index using logical equality instead of object equality
+	/** Helper function that finds an index using logical equality instead of object equality. Linear search.
+	 * @param array List<Point2D> which represents array to search
+	 * @param target Point2D to find in array
+	 * @returns index of target in array, or -1 if not found.
 	 */
 	public static int indexOf(List<Point2D> array, Point2D target) {
 		for (int i = 0; i < array.size(); i++) {
@@ -1658,7 +1687,44 @@ public class MyPanel extends JPanel implements MouseListener {
 		}
 		return -1;
 	}
-	
+
+	/** Helper function that finds an index using logical equality instead of object equality. Linear search.
+	 * @param array List<Point2D> which represents array to search
+	 * @param target Point2D to find in array
+	 * @param binary boolean. If true then binary search is performed
+	 * @returns index of target in array, or -1 if not found.
+	 */
+	public static int indexOf(List<Point2D> array, Point2D target, boolean binary) {
+		if (!binary) {
+			for (int i = 0; i < array.size(); i++) {
+				if (array.get(i).equals(target)) {
+					return i;
+				}
+			}
+			return -1;
+		}
+		int hi = array.size()-1;
+		int lo = 0;
+		int mid = (hi+lo)/2;
+
+		while (lo <= hi) {
+			Point2D point = array.get(mid);
+
+			int change = point.compare(target);
+
+			if (change == 1) {
+				hi = mid - 1;
+			} else if (change == -1) {
+				lo = mid + 1;
+			} else {
+				return mid;
+			}
+			mid = (hi+lo)/2;
+		}
+
+		return -1;
+	}
+
 	/**
 	 * Helper function for dncMerge. Helps with adding points so that each sub convex hull is sorted correctly so as to maintain clockwise order.
 	 * @param left List<Integer> Representing the indexes of some points.
@@ -1669,16 +1735,16 @@ public class MyPanel extends JPanel implements MouseListener {
 		double xS = 0;
 		double yS = 0;
 		List<Point2D> pntarr = new ArrayList<Point2D>();
-		
-		for (int i = 0; i < left.size(); i++) {
-			xS += inputReal.get(left.get(i)).getX();
-			yS += inputReal.get(left.get(i)).getY();
-			pntarr.add(inputReal.get(left.get(i)));
+
+		for (Integer integer : left) {
+			xS += inputReal.get(integer).getX();
+			yS += inputReal.get(integer).getY();
+			pntarr.add(inputReal.get(integer));
 		}
-		for (int i = 0; i < right.size(); i++) {
-			xS += inputReal.get(right.get(i)).getX();
-			yS += inputReal.get(right.get(i)).getY();
-			pntarr.add(inputReal.get(right.get(i)));
+		for (Integer integer : right) {
+			xS += inputReal.get(integer).getX();
+			yS += inputReal.get(integer).getY();
+			pntarr.add(inputReal.get(integer));
 		}
 		
 		
@@ -1686,8 +1752,8 @@ public class MyPanel extends JPanel implements MouseListener {
 		
 		pntarr = Vector2D.sort(center, pntarr, false);
 		List<Integer> output = new ArrayList<Integer>();
-		for (int i = 0; i < pntarr.size(); i++) {
-			output.add(inputReal.indexOf(pntarr.get(i)));
+		for (Point2D point2D : pntarr) {
+			output.add(indexOf(inputReal, point2D, true));
 		}
 		
 		return output;

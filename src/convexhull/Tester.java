@@ -14,14 +14,14 @@ public class Tester {
 	
 	public static List<Point2D> pointMaker(int n) {
 		List<Point2D> l = new ArrayList<Point2D>();
-		Random rd = new Random();
+		Random rd = new Random(System.currentTimeMillis());
 		for (int i = 0; i < n; i++) {
 			l.add(new Point2D(rd.nextFloat()*n, rd.nextFloat()*n));
 		}
 		return l;
 	}
 	
-	public static void main(String args[]) {  
+	public static void main(String[] args) {
 		Scanner scanner = new Scanner(System.in);
 		System.out.print("Input size > ");
 		int n = scanner.nextInt();
@@ -30,12 +30,20 @@ public class Tester {
 		System.out.print("What algorithm? <s, g, q, j, i, d> ");
 		char alg = scanner.next().charAt(0);
 		scanner.close();
+
+//		// TODO Remove this after profiling.
+//		int n = 10000;
+//		int reps = 100;
+//		char alg = 'd';
 		
 		long [] times = new long[reps];
 		
 		for (int i = 0; i < reps; i++) {
 			System.out.println("Round " + (i+1) + " of " + reps);
+
 			List<Point2D> l = pointMaker(n);
+//			System.out.println(l.size());
+			// System.out.println(l);
 			
 			long time = 0;
 			
