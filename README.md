@@ -9,3 +9,5 @@ Run from a file explorer: find the chtest.jar file, <!-- Change chtest.jar to wh
 Run from the command line: simply navigate to where chtest.jar is located and type ```java -jar chtest.jar``` and the program should start running.
 
 ```Tester.java``` contains a simple program to test runtimes of the different algorithms without having to use the UI.
+
+[Video Presentation][https://youtu.be/BCmF2SIZ06M]
