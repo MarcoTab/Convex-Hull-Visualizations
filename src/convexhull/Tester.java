@@ -30,11 +30,6 @@ public class Tester {
 		System.out.print("What algorithm? <s, g, q, j, i, d> ");
 		char alg = scanner.next().charAt(0);
 		scanner.close();
-
-//		// TODO Remove this after profiling.
-//		int n = 10000;
-//		int reps = 100;
-//		char alg = 'd';
 		
 		long [] times = new long[reps];
 		
